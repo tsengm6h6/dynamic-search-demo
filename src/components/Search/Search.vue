@@ -1,6 +1,6 @@
 <template>
   <div class="search__wrapper">
-    <div class="field search__field-outline">
+    <div class="search__field-outline">
       <div class="search__field-inner">
         <SearchOptionField
           v-for="config in selectedConfig"
@@ -16,6 +16,13 @@
           custom-class="search__autocomplete"
         />
       </div>
+      <b-icon
+        :class="`search__field-reset ${
+          selectedConfig.length > 0 ? '' : 'hidden'
+        }`"
+        icon="close-circle-outline"
+        type="is-primary"
+      ></b-icon>
     </div>
     <SearchButton />
   </div>
@@ -97,7 +104,7 @@ export default {
 .search__wrapper {
   width: 100%;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .search__field {
@@ -106,8 +113,8 @@ export default {
     box-shadow: inset 0 0.0625em 0.125em rgb(10 10 10 / 5%);
     background: transparent;
     border: 1px solid #dbdbdb;
-    border-radius: 4px;
-    margin-right: 1rem;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
     position: relative;
   }
 
@@ -119,6 +126,17 @@ export default {
     width: 100%;
     padding: 0 calc(0.75em - 1px);
     overflow-x: auto;
+  }
+
+  &-reset {
+    position: absolute;
+    right: calc(0.75em - 1px);
+    top: 0.5rem;
+    cursor: pointer;
+
+    &.hidden {
+      display: none;
+    }
   }
 }
 
