@@ -1,10 +1,22 @@
 <template>
-  <div>
-    <BaseAutocomplete
-      v-if="selectOptionKey"
-      :options="optionKeyitems"
-      @select="onKeySelected"
-    />
+  <div class="search__wrapper">
+    <div class="field search__field-outline">
+      <div class="search__field-inner">
+        <SearchOptionField
+          v-for="config in selectedConfig"
+          :key="config.id"
+          :initFieldConfig="config"
+          @field-changed="onFieldChanged"
+          custom-class="search__option"
+        />
+        <BaseAutocomplete
+          v-if="selectOptionKey"
+          :options="optionKeyitems"
+          @select="onKeySelected"
+          custom-class="search__autocomplete"
+        />
+      </div>
+    </div>
     <SearchButton />
   </div>
 </template>
@@ -12,12 +24,14 @@
 <script>
 import SearchButton from "./SearchButton.vue";
 import BaseAutocomplete from "@/components/Base/BaseAutocomplete.vue";
+import SearchOptionField from "./SearchOptionField.vue";
 
 export default {
   name: "Search",
   components: {
     SearchButton,
     BaseAutocomplete,
+    SearchOptionField,
   },
   props: {
     initConfig: {
@@ -52,7 +66,11 @@ export default {
       // 找到原始 config
       const index = this.config.findIndex((el) => el.key === value);
       // 加入 user 所選
-      this.selectedConfig.push(this.config[index]);
+      this.selectedConfig.push({
+        ...this.config[index],
+        isEdit: true,
+        id: Math.random().toString(36).substr(2, 9),
+      });
       // 檢查是否可複選
       // 若不可則 config 剔除該選項
       if (!this.config[index]?.multiple) {
@@ -61,6 +79,72 @@ export default {
       // 切換模式
       this.selectOptionKey = false;
     },
+    onFieldChanged(payload) {
+      console.log("change", payload);
+      const { id } = payload;
+      // 找到 user 所選 config 中的這個 field
+      const index = this.selectedConfig.findIndex((el) => el.id === id);
+      // splice 放進去
+      this.selectedConfig.splice(index, 1, payload);
+      // 切換模式
+      this.selectOptionKey = true;
+    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.search__wrapper {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+}
+
+.search__field {
+  &-outline {
+    width: 80%;
+    box-shadow: inset 0 0.0625em 0.125em rgb(10 10 10 / 5%);
+    background: transparent;
+    border: 1px solid #dbdbdb;
+    border-radius: 4px;
+    margin-right: 1rem;
+    position: relative;
+  }
+
+  &-inner {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 0 calc(0.75em - 1px);
+    overflow-x: auto;
+  }
+}
+
+.search__autocomplete,
+.search__option {
+  flex: 1 0 auto;
+}
+
+.search__autocomplete {
+  & ::v-deep .autocomplete {
+    position: static;
+
+    &::v-deep .input {
+      position: static;
+    }
+  }
+
+  & ::v-deep .control {
+    position: static;
+  }
+
+  & ::v-deep .input {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    position: static;
+  }
+}
+</style>

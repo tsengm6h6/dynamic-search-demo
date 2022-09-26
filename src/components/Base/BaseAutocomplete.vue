@@ -1,5 +1,5 @@
 <template>
-  <b-field :label="label">
+  <b-field :class="customClass" :label="label">
     <b-autocomplete
       v-model="input"
       placeholder="e.g. Anne"
@@ -29,6 +29,10 @@ export default {
     options: {
       type: Array,
       default: () => [],
+    },
+    customClass: {
+      type: [String, Array],
+      default: "",
     },
   },
   data() {
