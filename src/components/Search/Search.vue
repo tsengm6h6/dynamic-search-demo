@@ -20,6 +20,7 @@
         :class="`search__field-reset ${
           selectedConfig.length > 0 ? '' : 'hidden'
         }`"
+        @click="reset"
       >
         <b-icon icon="close-circle-outline" type="is-primary"></b-icon>
       </div>
@@ -32,6 +33,7 @@
 import SearchButton from "./SearchButton.vue";
 import BaseAutocomplete from "@/components/Base/BaseAutocomplete.vue";
 import SearchOptionField from "./SearchOptionField.vue";
+import { cloneDeep } from "lodash";
 
 export default {
   name: "Search",
@@ -48,14 +50,14 @@ export default {
   },
   data() {
     return {
-      config: this.initConfig,
+      config: cloneDeep(this.initConfig),
       selectedConfig: [],
       selectOptionKey: true,
     };
   },
   watch: {
     initConfig(newVal) {
-      this.config = newVal;
+      this.config = cloneDeep(newVal);
     },
   },
   computed: {
@@ -94,6 +96,11 @@ export default {
       // splice 放進去
       this.selectedConfig.splice(index, 1, payload);
       // 切換模式
+      this.selectOptionKey = true;
+    },
+    reset() {
+      this.selectedConfig = [];
+      this.config = cloneDeep(this.initConfig);
       this.selectOptionKey = true;
     },
   },
@@ -182,7 +189,7 @@ export default {
 /* width */
 ::-webkit-scrollbar {
   width: 0px;
-  height: 6px;
+  height: 4px;
   background-color: hsl(0, 0%, 98%);
 }
 
