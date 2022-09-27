@@ -7,13 +7,13 @@
           :key="config.id"
           :initFieldConfig="config"
           @field-changed="onFieldChanged"
-          custom-class="search__option"
+          custom-class="search__option reset__position"
         />
         <BaseAutocomplete
           v-if="selectOptionKey"
           :options="optionKeyitems"
           @select="onKeySelected"
-          custom-class="search__autocomplete"
+          custom-class="search__autocomplete reset__position"
         />
       </div>
       <b-icon
@@ -145,7 +145,7 @@ export default {
   flex: 1 0 auto;
 }
 
-.search__autocomplete {
+.reset__position {
   & ::v-deep .autocomplete {
     position: static;
 

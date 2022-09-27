@@ -70,6 +70,7 @@ export default {
       console.log(option);
       this.selected = option;
       this.$emit("select", option);
+      this.$emit("save-field", option.value);
     },
   },
 };
