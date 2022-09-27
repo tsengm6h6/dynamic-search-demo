@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h1 class="has-text-weight-semibold is-size-5 mt-6 mb-2">{{ title }}</h1>
+  <div class="mt-4">
+    <h1 class="has-text-weight-semibold is-size-5 mb-2">{{ title }}</h1>
     <pre class="display-height">{{ list }}</pre>
   </div>
 </template>
@@ -23,7 +23,7 @@ export default {
 
 <style lang="scss" scoped>
 .display-height {
-  height: 300px;
+  height: 70vh;
   overflow: auto;
 }
 </style>

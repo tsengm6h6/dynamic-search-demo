@@ -1,13 +1,20 @@
 <template>
   <div id="app">
     <BaseCard>
-      <Search :init-config="config" @search="setResult" />
-      <div class="is-flex is-flex-direction-column">
-        <CodeDisplay title="Config" :list="config" />
-        <CodeDisplay title="Result" :list="result" />
+      <Search ref="search" :init-config="config" @search="setResult" />
+      <div class="mt-4">
+        <b-button type="is-success" @click="onTryIt">Try it</b-button>
+      </div>
+      <div class="columns is-multiline is-centered">
+        <ConfigForm
+          class="column is-8"
+          v-if="addConfig"
+          @use-config="changeConfig"
+        />
+        <CodeDisplay class="column is-6" title="Config" :list="config" />
+        <CodeDisplay class="column is-6" title="Result" :list="result" />
       </div>
     </BaseCard>
-    <b-button @click="changeConfig">Switch</b-button>
   </div>
 </template>
 
@@ -15,8 +22,8 @@
 import BaseCard from "./components/Base/BaseCard.vue";
 import Search from "./components/Search/Search.vue";
 import CodeDisplay from "./components/CodeDisplay.vue";
+import ConfigForm from "./components/ConfigForm.vue";
 import { mockSearchConfigOne } from "@/mock/mockData.js";
-import { mockSearchConfigTwo } from "@/mock/mockData.js";
 
 export default {
   name: "App",
@@ -24,22 +31,28 @@ export default {
     BaseCard,
     Search,
     CodeDisplay,
+    ConfigForm,
   },
   data() {
     return {
       useConfig: "one",
       config: mockSearchConfigOne,
       result: [],
+      addConfig: false,
     };
   },
   methods: {
-    changeConfig() {
-      this.config =
-        this.useConfig === "one" ? mockSearchConfigTwo : mockSearchConfigOne;
-      this.useConfig = this.useConfig === "one" ? "two" : "one";
+    changeConfig(payload) {
+      this.config = payload;
+      this.$refs.search.reset();
+      this.result = [];
     },
     setResult(payload) {
       this.result = payload;
+    },
+    onTryIt() {
+      this.config = [];
+      this.addConfig = true;
     },
   },
 };
