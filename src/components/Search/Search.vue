@@ -153,6 +153,7 @@ export default {
         }
       });
       console.log("params", params);
+      this.$emit("search", params);
     },
     formatMultipleParams(params, item) {
       const index = params.findIndex((param) => param.key === item.key);
