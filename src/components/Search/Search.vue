@@ -25,7 +25,7 @@
         <b-icon icon="close-circle-outline" type="is-primary"></b-icon>
       </div>
     </div>
-    <SearchButton @search="search" />
+    <SearchButton :disabled="!allowSearch" @search="search" />
   </div>
 </template>
 
@@ -33,7 +33,7 @@
 import SearchButton from "./SearchButton.vue";
 import BaseAutocomplete from "@/components/Base/BaseAutocomplete.vue";
 import SearchOptionField from "./SearchOptionField.vue";
-import { cloneDeep, pick } from "lodash";
+import { cloneDeep, pick, chain } from "lodash";
 
 export default {
   name: "Search",
@@ -67,6 +67,21 @@ export default {
         display: el.label,
       }));
     },
+    multipleConfig() {
+      return (
+        chain(this.selectedConfig)
+          .filter(({ multiple }) => multiple)
+          .map(({ key }) => key)
+          .uniq()
+          .value() || []
+      );
+    },
+    allowSearch() {
+      return (
+        this.selectedConfig.length === 0 ||
+        this.selectedConfig.some(({ key, value }) => key && value)
+      );
+    },
   },
   methods: {
     onKeySelected(payload) {
@@ -91,8 +106,9 @@ export default {
     onFieldChanged(payload) {
       console.log("change", payload);
       const { id } = payload;
-      // 找到 user 所選 config 中的這個 field
+      // 找到 user 所選 selectedConfig 中的這個 field
       const index = this.selectedConfig.findIndex((el) => el.id === id);
+      // TODO: 濾掉 render config 中已選的 option
       // splice 放進去
       this.selectedConfig.splice(index, 1, payload);
       // 切換模式
@@ -104,10 +120,27 @@ export default {
       this.selectOptionKey = true;
     },
     search() {
-      const params = this.selectedConfig.map((item) =>
-        pick(item, ["key", "value"])
-      );
+      const params = [];
+      this.selectedConfig.forEach((item) => {
+        if (item.multiple) {
+          this.formatMultiple(params, item);
+        } else {
+          params.push(pick(item, ["key", "value"]));
+        }
+      });
       console.log("params", params);
+    },
+    formatMultiple(params, item) {
+      const index = params.findIndex((param) => param.key === item.key);
+      if (index > 0) {
+        params.splice(index, 1, {
+          ...params[index],
+          value: [...params[index].value, item.value],
+        });
+      } else {
+        params.push({ key: item.key, value: [item.value] });
+      }
+      return params;
     },
   },
 };
