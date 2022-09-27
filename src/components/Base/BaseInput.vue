@@ -1,5 +1,9 @@
 <template>
-  <b-field :label="label">
+  <b-field
+    :type="invalid ? 'is-danger' : ''"
+    :message="invalid ? invalidMessage : ''"
+    :label="label"
+  >
     <b-input
       v-bind="$attrs"
       v-model="currValue"
@@ -20,6 +24,14 @@ export default {
     value: {
       type: String,
       default: "",
+    },
+    invalid: {
+      type: Boolean,
+      default: false,
+    },
+    invalidMessage: {
+      type: String,
+      default: "Required",
     },
   },
   computed: {

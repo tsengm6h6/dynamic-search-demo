@@ -1,5 +1,9 @@
 <template>
-  <b-field :label="label">
+  <b-field
+    :type="invalid ? 'is-danger' : ''"
+    :message="invalid ? invalidMessage : ''"
+    :label="label"
+  >
     <b-select v-bind="$attrs" v-model="currValue">
       <option
         v-for="option in options"
@@ -28,6 +32,14 @@ export default {
     options: {
       type: Array,
       default: () => [],
+    },
+    invalid: {
+      type: Boolean,
+      default: false,
+    },
+    invalidMessage: {
+      type: String,
+      default: "Required",
     },
   },
   computed: {

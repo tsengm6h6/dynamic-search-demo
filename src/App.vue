@@ -22,7 +22,7 @@
 import BaseCard from "./components/Base/BaseCard.vue";
 import Search from "./components/Search/Search.vue";
 import CodeDisplay from "./components/CodeDisplay.vue";
-import ConfigForm from "./components/ConfigForm.vue";
+import ConfigForm from "./components/Form/ConfigForm.vue";
 import { mockSearchConfigOne } from "@/mock/mockData.js";
 
 export default {

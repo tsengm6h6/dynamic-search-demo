@@ -5,11 +5,13 @@
       <BaseInput
         label="Key"
         v-model="form.key"
+        :invalid="this.invalidList.includes('key')"
         placeholder="Input a config key"
       />
       <BaseInput
         label="Label"
         v-model="form.label"
+        :invalid="this.invalidList.includes('label')"
         placeholder="Input a config label"
       />
       <BaseSelect
@@ -17,27 +19,15 @@
         expanded
         v-model="form.type"
         :options="typeOptions"
+        :invalid="this.invalidList.includes('type')"
         placeholder="Select a search type"
       />
-      <div
-        v-if="form.type === 'autocomplete' && form.options.length > 0"
-        class="mb-2 option__fields"
-      >
-        <b-field v-for="option in form.options" :key="option.value" grouped>
-          <b-input
-            v-model="option.display"
-            disabled
-            expanded
-            placeholder="Input an option"
-          ></b-input>
-        </b-field>
-      </div>
-      <b-field v-if="form.type === 'autocomplete'" grouped>
-        <b-input v-model="newOption" expanded placeholder="Option..."></b-input>
-        <p class="control">
-          <b-button label="Add" type="is-primary" @click="addOption" />
-        </p>
-      </b-field>
+      <OptionField
+        v-if="form.type === 'autocomplete'"
+        v-model="newOption"
+        :options="form.options"
+        @add-option="addOption"
+      />
       <BaseInput
         disabled
         label="Value"
@@ -57,7 +47,12 @@
       <b-button type="is-success" outlined @click="resetConfig"
         >Reset Config</b-button
       >
-      <b-button type="is-success" @click="addConfig">Add Config</b-button>
+      <b-button
+        type="is-success"
+        :disabled="disabledAddConfig"
+        @click="addConfig"
+        >Add Config</b-button
+      >
     </div>
   </div>
 </template>
@@ -67,6 +62,7 @@ import BaseInput from "@/components/Base/BaseInput";
 import BaseSelect from "@/components/Base/BaseSelect";
 import { v4 as uuidv4 } from "uuid";
 import { cloneDeep } from "lodash";
+import OptionField from "./OptionField.vue";
 
 const RAW_FORM = {
   key: "",
@@ -76,12 +72,12 @@ const RAW_FORM = {
   options: [],
   multiple: false,
 };
-
 export default {
   name: "ConfigFrom",
   components: {
     BaseInput,
     BaseSelect,
+    OptionField,
   },
   data() {
     return {
@@ -98,10 +94,32 @@ export default {
       ],
       newOption: "",
       config: [],
+      invalidList: [],
     };
+  },
+  computed: {
+    requiredField() {
+      return {
+        key: true,
+        label: true,
+        type: true,
+        value: false,
+        options: this.form.type === "autocomplete",
+        multiple: true,
+      };
+    },
+    disabledAddConfig() {
+      return (
+        this.form.type === "autocomplete" && this.form.options.length === 0
+      );
+    },
   },
   methods: {
     addOption() {
+      if (!this.newOption) {
+        this.showAlert({ message: "Option is required !" });
+        return;
+      }
       this.form.options.push({
         value: uuidv4(),
         display: this.newOption,
@@ -109,6 +127,11 @@ export default {
       this.newOption = "";
     },
     addConfig() {
+      const isValid = this.validate();
+      if (!isValid) {
+        this.showAlert({ message: "Please fillin required fields." });
+        return;
+      }
       this.config.push(this.form);
       this.$emit("use-config", this.config);
       this.resetForm();
@@ -119,6 +142,37 @@ export default {
     },
     resetForm() {
       this.form = cloneDeep(RAW_FORM);
+    },
+    validate() {
+      this.invalidList = [];
+      Object.keys(this.form).forEach((key) => {
+        if (typeof this.form[key] === "boolean") return;
+        if (Array.isArray(this.form[key])) {
+          if (
+            this.form.type === "autocomplete" &&
+            this.form[key].length === 0
+          ) {
+            this.showAlert({
+              message: "Autocomplete is required at least one option",
+            });
+            this.invalidList.push(key);
+          }
+        } else {
+          if (this.requiredField[key] && !this.form[key])
+            this.invalidList.push(key);
+        }
+      });
+      return this.invalidList.length === 0;
+    },
+    showAlert({ message, type = "is-warning" }) {
+      this.$buefy.snackbar.open({
+        message: message,
+        type: type,
+        position: "is-top",
+        actionText: "Got it",
+        duration: 3500,
+        onAction: () => {},
+      });
     },
   },
 };
