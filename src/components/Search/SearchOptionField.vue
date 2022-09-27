@@ -12,7 +12,7 @@
         <component
           :is="`base-${config.type}`"
           v-bind="config.attrs"
-          :options="config.options || ''"
+          :options="useOptions || []"
           @save-field="handleFieldSave"
         />
       </div>
@@ -47,6 +47,10 @@ export default {
       type: [String, Array],
       default: "",
     },
+    avalibleOptions: {
+      type: Array,
+      default: () => {},
+    },
   },
   computed: {
     config: {
@@ -66,6 +70,11 @@ export default {
         this.config.value ||
         ""
       );
+    },
+    useOptions() {
+      return this.initFieldConfig.multiple
+        ? this.avalibleOptions
+        : this.initFieldConfig.options;
     },
   },
   methods: {

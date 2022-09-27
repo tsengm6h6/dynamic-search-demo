@@ -6,6 +6,7 @@
           v-for="config in selectedConfig"
           :key="config.id"
           :initFieldConfig="config"
+          :avalible-options="getAvalibleOptions(config)"
           @field-changed="onFieldChanged"
           custom-class="search__option reset__position"
         />
@@ -50,14 +51,15 @@ export default {
   },
   data() {
     return {
-      config: cloneDeep(this.initConfig),
+      config: [],
+      multipleConfig: [],
       selectedConfig: [],
       selectOptionKey: true,
     };
   },
   watch: {
     initConfig(newVal) {
-      this.config = cloneDeep(newVal);
+      this.init(newVal);
     },
   },
   computed: {
@@ -67,14 +69,16 @@ export default {
         display: el.label,
       }));
     },
-    multipleConfig() {
-      return (
-        chain(this.selectedConfig)
-          .filter(({ multiple }) => multiple)
-          .map(({ key }) => key)
-          .uniq()
-          .value() || []
-      );
+    multipleSelectedPair() {
+      const pair = {}; // key: [options]
+      this.multipleConfig.forEach((key) => {
+        const selected =
+          this.selectedConfig.filter((config) => config.key === key) || [];
+        const selectedOptions = selected.map((item) => item.value) || [];
+        console.log("selected", selected, selectedOptions);
+        pair[key] = selectedOptions || [];
+      });
+      return pair;
     },
     allowSearch() {
       return (
@@ -83,7 +87,19 @@ export default {
       );
     },
   },
+  created() {
+    this.init(this.initConfig);
+  },
   methods: {
+    init(initConfig) {
+      this.config = cloneDeep(initConfig);
+      this.multipleConfig =
+        chain(this.config)
+          .filter(({ multiple }) => multiple)
+          .map(({ key }) => key)
+          .uniq()
+          .value() || [];
+    },
     onKeySelected(payload) {
       console.log(payload);
       const { value } = payload;
@@ -95,24 +111,32 @@ export default {
         isEdit: true,
         id: Math.random().toString(36).substr(2, 9),
       });
-      // 檢查是否可複選
-      // 若不可則 config 剔除該選項
-      if (!this.config[index]?.multiple) {
-        this.config.splice(index, 1);
-      }
       // 切換模式
       this.selectOptionKey = false;
     },
     onFieldChanged(payload) {
       console.log("change", payload);
-      const { id } = payload;
-      // 找到 user 所選 selectedConfig 中的這個 field
+      const { id, key } = payload;
+      // 更新 user 所選 selectedConfig -> render display tag
       const index = this.selectedConfig.findIndex((el) => el.id === id);
-      // TODO: 濾掉 render config 中已選的 option
-      // splice 放進去
       this.selectedConfig.splice(index, 1, payload);
+      // 更新原始可選條件 -> render option key list
+      const configIndex = this.config.findIndex((el) => el.key === key);
+      this.updateConfig(configIndex);
       // 切換模式
       this.selectOptionKey = true;
+    },
+    updateConfig(index) {
+      const { multiple, options, key } = this.config[index];
+      // 複選有選項 -> 已選滿 true，則 config 剔除該選項
+      // 複選沒選項 -> false，保留（可填無限多個）
+      // 不是複選 -> 無條件 true，則 config 剔除該選項
+      const fullSelected = multiple
+        ? options && options.length === this.multipleSelectedPair[key].length
+        : true;
+      if (fullSelected) {
+        this.config.splice(index, 1);
+      }
     },
     reset() {
       this.selectedConfig = [];
@@ -123,16 +147,16 @@ export default {
       const params = [];
       this.selectedConfig.forEach((item) => {
         if (item.multiple) {
-          this.formatMultiple(params, item);
+          this.formatMultipleParams(params, item);
         } else {
           params.push(pick(item, ["key", "value"]));
         }
       });
       console.log("params", params);
     },
-    formatMultiple(params, item) {
+    formatMultipleParams(params, item) {
       const index = params.findIndex((param) => param.key === item.key);
-      if (index > 0) {
+      if (index > -1) {
         params.splice(index, 1, {
           ...params[index],
           value: [...params[index].value, item.value],
@@ -141,6 +165,17 @@ export default {
         params.push({ key: item.key, value: [item.value] });
       }
       return params;
+    },
+    getAvalibleOptions({ key: configKey, multiple }) {
+      const originOptions =
+        this.config.find(({ key }) => key === configKey)?.options || [];
+      const avalibleOptions = originOptions.filter((option) =>
+        multiple
+          ? !this.multipleSelectedPair[configKey]?.includes(option.value)
+          : option
+      );
+      console.log(originOptions, avalibleOptions);
+      return avalibleOptions;
     },
   },
 };
