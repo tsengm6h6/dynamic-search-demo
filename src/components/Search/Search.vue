@@ -25,7 +25,7 @@
         <b-icon icon="close-circle-outline" type="is-primary"></b-icon>
       </div>
     </div>
-    <SearchButton />
+    <SearchButton @search="search" />
   </div>
 </template>
 
@@ -33,7 +33,7 @@
 import SearchButton from "./SearchButton.vue";
 import BaseAutocomplete from "@/components/Base/BaseAutocomplete.vue";
 import SearchOptionField from "./SearchOptionField.vue";
-import { cloneDeep } from "lodash";
+import { cloneDeep, pick } from "lodash";
 
 export default {
   name: "Search",
@@ -102,6 +102,12 @@ export default {
       this.selectedConfig = [];
       this.config = cloneDeep(this.initConfig);
       this.selectOptionKey = true;
+    },
+    search() {
+      const params = this.selectedConfig.map((item) =>
+        pick(item, ["key", "value"])
+      );
+      console.log("params", params);
     },
   },
 };
