@@ -116,7 +116,7 @@ export default {
 
 .search__field {
   &-outline {
-    width: 80%;
+    min-width: 0;
     flex: 1;
     box-shadow: inset 0 0.0625em 0.125em rgb(10 10 10 / 5%);
     background: transparent;
