@@ -1,16 +1,19 @@
 <template>
-  <div class="my-2 display__field">
-    <b-field v-for="option in options" :key="option.value" grouped>
-      <b-input v-model="option.display" disabled expanded></b-input>
-    </b-field>
+  <div class="mt-4">
+    <h1 class="has-text-weight-semibold is-size-5 mb-2">{{ title }}</h1>
+    <pre class="display-height">{{ list }}</pre>
   </div>
 </template>
 
 <script>
 export default {
-  name: "DisplayField",
+  name: "CodeDisplay",
   props: {
-    options: {
+    title: {
+      type: String,
+      default: "",
+    },
+    list: {
       type: Array,
       default: () => [],
     },
@@ -19,8 +22,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.display__field {
-  max-height: 150px;
+.display-height {
+  min-height: 300px;
+  max-height: 70vh;
   overflow: auto;
 }
 </style>

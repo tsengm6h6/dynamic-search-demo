@@ -1,23 +1,21 @@
 <template>
   <div>
-    <b-field label="Attributes" v-if="attrOptions.length > 0" grouped expanded>
-      <b-field expanded>
-        <b-select v-model="newAttr.key" placeholder="Attrs. key">
-          <option
-            v-for="(option, index) in attrOptions"
-            :key="index"
-            :value="option"
-          >
-            {{ option }}
-          </option>
-        </b-select>
-        <b-input
-          v-model="newAttr.value"
-          :disabled="!newAttr.key"
-          placeholder="Attrs. value"
-          expanded
-        ></b-input>
-      </b-field>
+    <b-field label="Attributes" v-if="attrOptions.length > 0">
+      <b-select expanded v-model="newAttr.key" placeholder="Attrs. key">
+        <option
+          v-for="(option, index) in attrOptions"
+          :key="index"
+          :value="option"
+        >
+          {{ option }}
+        </option>
+      </b-select>
+      <b-input
+        expanded
+        v-model="newAttr.value"
+        :disabled="!newAttr.key"
+        placeholder="Attrs. value"
+      ></b-input>
       <div class="control">
         <b-button
           icon-right="plus"
@@ -29,36 +27,42 @@
     </b-field>
 
     <b-field
-      class="attr__field"
+      class="attr__field p-r-2"
+      v-for="option in list"
+      :key="option.key"
+      grouped
       :label="attrOptions.length === 0 ? 'Attributes' : ''"
     >
-      <b-field v-for="option in list" :key="option.key" grouped expanded>
-        <b-field expanded>
-          <b-select disabled v-model="option.key" placeholder="Attrs. key">
-            <option
-              v-for="(attr, index) in allowAttrs"
-              :key="index"
-              :value="attr"
-            >
-              {{ attr }}
-            </option>
-          </b-select>
-          <b-input
-            v-model="option.value"
-            disabled
-            placeholder="Attrs. value"
-            expanded
-          ></b-input>
-        </b-field>
-        <div class="control">
-          <b-button
-            icon-right="delete"
-            type="is-primary"
-            outlined
-            @click="removeAttribute(option)"
-          />
-        </div>
+      <b-field expanded>
+        <b-select
+          expanded
+          disabled
+          v-model="option.key"
+          placeholder="Attrs. key"
+        >
+          <option
+            v-for="(attr, index) in allowAttrs"
+            :key="index"
+            :value="attr"
+          >
+            {{ attr }}
+          </option>
+        </b-select>
+        <b-input
+          v-model="option.value"
+          disabled
+          placeholder="Attrs. value"
+          expanded
+        ></b-input>
       </b-field>
+      <div class="control">
+        <b-button
+          icon-right="delete"
+          type="is-primary"
+          outlined
+          @click="removeAttribute(option)"
+        />
+      </div>
     </b-field>
   </div>
 </template>

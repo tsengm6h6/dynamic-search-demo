@@ -3,16 +3,28 @@
     <BaseCard>
       <Search ref="search" :init-config="config" @search="setResult" />
       <div class="mt-4">
-        <b-button type="is-success" @click="onTryIt">Try it</b-button>
+        <b-button type="is-success" @click="toggleTryIt">
+          {{ tryIt ? "Back to Demo" : "Try it" }}
+        </b-button>
       </div>
-      <div class="columns is-multiline is-centered">
-        <ConfigForm
-          class="column is-8"
-          v-if="addConfig"
-          @use-config="changeConfig"
-        />
-        <CodeDisplay class="column is-6" title="Config" :list="config" />
-        <CodeDisplay class="column is-6" title="Result" :list="result" />
+      <div>
+        <div class="columns is-multiline">
+          <ConfigForm
+            class="column is-4"
+            v-if="tryIt"
+            @use-config="changeConfig"
+          />
+          <CodeDisplay
+            :class="`column ${tryIt ? 'is-4' : 'is-6'}`"
+            title="Config"
+            :list="config"
+          />
+          <CodeDisplay
+            :class="`column ${tryIt ? 'is-4' : 'is-6'}`"
+            title="Result"
+            :list="result"
+          />
+        </div>
       </div>
     </BaseCard>
   </div>
@@ -38,7 +50,7 @@ export default {
       useConfig: "one",
       config: mockSearchConfigOne,
       result: [],
-      addConfig: false,
+      tryIt: false,
     };
   },
   methods: {
@@ -50,12 +62,15 @@ export default {
     setResult(payload) {
       this.result = payload;
     },
-    onTryIt() {
-      this.config = [];
-      this.addConfig = true;
+    toggleTryIt() {
+      this.tryIt = !this.tryIt;
+      this.config = this.tryIt ? [] : mockSearchConfigOne;
+      this.reset();
+    },
+    reset() {
+      this.$refs.search.reset();
+      this.result = [];
     },
   },
 };
 </script>
-
-<style></style>

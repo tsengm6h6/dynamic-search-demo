@@ -1,7 +1,7 @@
 <template>
   <div class="mt-4 p-5">
     <h1 class="has-text-weight-semibold is-size-5 mb-2">Enter your config</h1>
-    <section>
+    <section class="attrs__height">
       <BaseInput
         label="Key"
         v-model="form.key"
@@ -28,13 +28,14 @@
         :options="form.options"
         @add-option="addOption"
       />
+      <AttributeField :options="form.attrs" @change-attrs="changeAttribute" />
       <BaseInput
         disabled
         label="Value"
         v-model="form.value"
         placeholder="Input a config value"
       />
-      <div class="block">
+      <div class="block mb-4">
         <b-field label="Multiple">
           <b-radio v-model="form.multiple" native-value="true"> True </b-radio>
           <b-radio v-model="form.multiple" native-value="false">
@@ -63,6 +64,7 @@ import BaseSelect from "@/components/Base/BaseSelect";
 import { v4 as uuidv4 } from "uuid";
 import { cloneDeep } from "lodash";
 import OptionField from "./OptionField.vue";
+import AttributeField from "./AttributeField.vue";
 
 const RAW_FORM = {
   key: "",
@@ -71,13 +73,16 @@ const RAW_FORM = {
   value: null,
   options: [],
   multiple: false,
+  attrs: [],
 };
+
 export default {
   name: "ConfigFrom",
   components: {
     BaseInput,
     BaseSelect,
     OptionField,
+    AttributeField,
   },
   data() {
     return {
@@ -106,6 +111,7 @@ export default {
         value: false,
         options: this.form.type === "autocomplete",
         multiple: true,
+        attrs: false,
       };
     },
     disabledAddConfig() {
@@ -125,6 +131,11 @@ export default {
         display: this.newOption,
       });
       this.newOption = "";
+    },
+    changeAttribute(payload) {
+      console.log("change attrs");
+      const formatPayload = payload.map(({ key, value }) => ({ [key]: value }));
+      this.form.attrs = formatPayload;
     },
     addConfig() {
       const isValid = this.validate();
@@ -148,10 +159,7 @@ export default {
       Object.keys(this.form).forEach((key) => {
         if (typeof this.form[key] === "boolean") return;
         if (Array.isArray(this.form[key])) {
-          if (
-            this.form.type === "autocomplete" &&
-            this.form[key].length === 0
-          ) {
+          if (this.requiredField[key] && this.form[key].length === 0) {
             this.showAlert({
               message: "Autocomplete is required at least one option",
             });
@@ -179,8 +187,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.option__fields {
-  max-height: 150px;
+.attrs__height {
+  max-height: 60vh;
   overflow: auto;
+  padding-right: 12px;
 }
 </style>

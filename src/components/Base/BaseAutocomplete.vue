@@ -2,7 +2,8 @@
   <b-field :class="customClass" :label="label">
     <b-autocomplete
       v-model="input"
-      placeholder="e.g. Anne"
+      v-bind="$attrs"
+      :placeholder="placeholder"
       keep-first
       open-on-focus
       :data="filteredDataObj"
@@ -33,6 +34,10 @@ export default {
     customClass: {
       type: [String, Array],
       default: "",
+    },
+    placeholder: {
+      type: String,
+      default: "Click to start search",
     },
   },
   data() {

@@ -12,6 +12,7 @@
         />
         <BaseAutocomplete
           v-if="selectOptionKey"
+          placeholder="Click to start search"
           :options="optionKeyitems"
           @select="onKeySelected"
           custom-class="search__autocomplete reset__position"
