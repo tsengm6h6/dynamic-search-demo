@@ -16,13 +16,13 @@
           custom-class="search__autocomplete reset__position"
         />
       </div>
-      <b-icon
+      <div
         :class="`search__field-reset ${
           selectedConfig.length > 0 ? '' : 'hidden'
         }`"
-        icon="close-circle-outline"
-        type="is-primary"
-      ></b-icon>
+      >
+        <b-icon icon="close-circle-outline" type="is-primary"></b-icon>
+      </div>
     </div>
     <SearchButton />
   </div>
@@ -122,7 +122,7 @@ export default {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     width: 100%;
     padding: 0 calc(0.75em - 1px);
     overflow-x: auto;
@@ -130,9 +130,20 @@ export default {
 
   &-reset {
     position: absolute;
-    right: calc(0.75em - 1px);
-    top: 0.5rem;
+    top: 0;
+    right: 0;
+    height: 2.5em;
+    width: 2.5em;
     cursor: pointer;
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0.9)
+    );
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     &.hidden {
       display: none;
