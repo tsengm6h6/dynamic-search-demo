@@ -104,12 +104,13 @@ export default {
 .search__wrapper {
   width: 100%;
   display: flex;
-  align-items: center;
+  // align-items: center;
 }
 
 .search__field {
   &-outline {
     width: 80%;
+    flex: 1;
     box-shadow: inset 0 0.0625em 0.125em rgb(10 10 10 / 5%);
     background: transparent;
     border: 1px solid #dbdbdb;
@@ -175,5 +176,39 @@ export default {
     background: transparent;
     position: static;
   }
+}
+
+/* Scrollbar */
+/* width */
+::-webkit-scrollbar {
+  width: 0px;
+  height: 6px;
+  background-color: hsl(0, 0%, 98%);
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #ffffff62;
+  background-image: linear-gradient(
+    225deg,
+    #ffffff 0%,
+    #f2effb 11%,
+    #8769d9 72%,
+    #552fbc 100%
+  );
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #8769d9;
+  background-image: linear-gradient(236deg, #8769d9 0%, #552fbc 100%);
 }
 </style>

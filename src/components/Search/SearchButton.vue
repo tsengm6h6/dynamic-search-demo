@@ -22,5 +22,6 @@ export default {
   box-shadow: inset 0 0.0625em 0.125em rgb(10 10 10 / 5%);
   border: 1px solid #8769d9;
   outline: 1px solid #8769d9;
+  height: auto; // 依據 flex 高度填滿
 }
 </style>
