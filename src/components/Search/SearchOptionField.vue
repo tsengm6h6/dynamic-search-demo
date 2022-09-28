@@ -17,23 +17,22 @@
         <component
           :is="`base-${config.type}`"
           v-bind="config.attrs"
+          :value="config.value"
           :options="useOptions || []"
           @save-field="handleFieldSave"
         />
       </div>
     </div>
-    <div v-else>
-      <div class="control tag__wrapper">
-        <b-taglist attached>
-          <b-tag type="is-dark">{{ config.label }}</b-tag>
-          <b-tag
-            type="is-info"
-            closable
-            @close="$emit('remove-option-key', config)"
-            >{{ config.display }}</b-tag
-          >
-        </b-taglist>
-      </div>
+    <div v-else @dblclick="edit(config)" class="control tag__wrapper">
+      <b-taglist attached>
+        <b-tag type="is-dark">{{ config.label }}</b-tag>
+        <b-tag
+          type="is-info"
+          closable
+          @close="$emit('remove-option-key', config)"
+          >{{ config.display }}</b-tag
+        >
+      </b-taglist>
     </div>
   </div>
 </template>
@@ -104,9 +103,12 @@ export default {
       // emit 給複層更新 selectedConfig -> render
       this.$emit("field-changed", saveConfig);
     },
-    // removeOption({ id, key }) {
-    //   this.$emit("remove-config", { id, key });
-    // },
+    edit() {
+      this.$emit("field-changed", {
+        ...this.config,
+        isEdit: true,
+      });
+    },
   },
 };
 </script>
@@ -129,6 +131,7 @@ export default {
 
 .tag__wrapper {
   margin: calc(0.5em - 1px) 0.5em calc(0.5em - 1px) 0;
+  cursor: pointer;
 
   &::v-deep .tags {
     flex-wrap: nowrap;

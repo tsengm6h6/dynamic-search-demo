@@ -9,7 +9,9 @@
           :avalible-options="getAvalibleOptions(config)"
           @field-changed="onFieldChanged($event, 'CHANGE')"
           @remove-option-key="onFieldChanged($event, 'REMOVE')"
-          custom-class="search__option reset__position"
+          :custom-class="`search__option reset__position ${
+            config.isEdit && config.value ? 'edit' : ''
+          }`"
         />
         <BaseAutocomplete
           v-if="selectOptionKey"
@@ -116,17 +118,20 @@ export default {
       // 切換模式
       this.selectOptionKey = false;
     },
-    onFieldChanged(payload, action = "CHANGE") {
-      console.log("change", payload);
+    onFieldChanged(payload, action) {
       const { id, key } = payload;
       // 更新 user 所選 selectedConfig -> render display tag
       this.updateSelectedConfig(id, payload, action);
       // 更新原始可選條件 -> render option key list
       this.updateConfig(key);
       // 切換模式
-      this.selectOptionKey = true;
+      if (payload.isEdit && payload.value) {
+        this.selectOptionKey = false;
+      } else {
+        this.selectOptionKey = true;
+      }
     },
-    updateSelectedConfig(id, payload, action) {
+    updateSelectedConfig(id, payload, action = "CHANGE") {
       const index = this.selectedConfig.findIndex((el) => el.id === id);
       if (action === "REMOVE") {
         this.selectedConfig.splice(index, 1);
@@ -184,7 +189,7 @@ export default {
       }
       return params;
     },
-    getAvalibleOptions({ key: configKey, multiple }) {
+    getAvalibleOptions({ key: configKey, multiple, isEdit, value }) {
       const originOptions =
         this.config.find(({ key }) => key === configKey)?.options || [];
       const avalibleOptions = originOptions.filter((option) =>
@@ -193,7 +198,10 @@ export default {
           : option
       );
       console.log(originOptions, avalibleOptions);
-      return avalibleOptions;
+      const selfOption = originOptions.find((item) => item.value === value);
+      return value && isEdit
+        ? avalibleOptions.concat(selfOption)
+        : avalibleOptions;
     },
   },
 };
@@ -254,6 +262,10 @@ export default {
 .search__autocomplete,
 .search__option {
   flex: 1 0 auto;
+}
+
+.edit {
+  flex: 0 0 auto;
 }
 
 .reset__position {

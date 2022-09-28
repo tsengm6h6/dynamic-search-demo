@@ -24,7 +24,7 @@ export default {
       default: "",
     },
     value: {
-      type: String,
+      type: [String, Number],
       default: "",
     },
     options: {
@@ -47,9 +47,14 @@ export default {
     };
   },
   watch: {
-    options(newVal) {
-      console.log("auto", newVal);
+    options() {
       this.init();
+    },
+    value: {
+      handler() {
+        this.init();
+      },
+      immediate: true,
     },
   },
   computed: {
