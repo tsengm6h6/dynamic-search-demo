@@ -18,6 +18,7 @@
           placeholder="Click to start search"
           :options="optionKeyitems"
           @select="onKeySelected"
+          :autofocus="selectedConfig.length > 0"
           custom-class="search__autocomplete reset__position"
         />
       </div>

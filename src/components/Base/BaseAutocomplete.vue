@@ -1,6 +1,7 @@
 <template>
   <b-field :class="customClass" :label="label">
     <b-autocomplete
+      ref="autocomplete"
       v-model="input"
       v-bind="$attrs"
       :placeholder="placeholder"
@@ -82,6 +83,9 @@ export default {
       this.$emit("select", option);
       this.$emit("save-field", option.value);
     },
+  },
+  mounted() {
+    if (this.$attrs.autofocus) this.$refs.autocomplete.focus();
   },
 };
 </script>

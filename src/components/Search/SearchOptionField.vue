@@ -66,6 +66,10 @@ export default {
       get() {
         return {
           ...this.initFieldConfig,
+          attrs: {
+            ...this.initFieldConfig.attrs,
+            autofocus: true,
+          },
         };
       },
       set(newConfig) {

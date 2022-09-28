@@ -5,6 +5,7 @@
     :label="label"
   >
     <b-input
+      ref="input"
       v-bind="$attrs"
       v-model="currValue"
       @keydown.enter.native="onKeyDown"
@@ -49,6 +50,9 @@ export default {
       if (!evt.target.value.trim()) return;
       this.$emit("save-field", evt.target.value.trim());
     },
+  },
+  mounted() {
+    if (this.$attrs.autofocus) this.$refs.input.focus();
   },
 };
 </script>
