@@ -127,7 +127,6 @@ export default {
         return this.attributes;
       },
       set(newVal) {
-        console.log("set", newVal);
         this.$emit("change-attrs", newVal);
       },
     },

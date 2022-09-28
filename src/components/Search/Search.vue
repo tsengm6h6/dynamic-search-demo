@@ -80,7 +80,6 @@ export default {
         const selected =
           this.selectedConfig.filter((config) => config.key === key) || [];
         const selectedOptions = selected.map((item) => item.value) || [];
-        console.log("selected", selected, selectedOptions);
         pair[key] = selectedOptions || [];
       });
       return pair;
@@ -106,7 +105,6 @@ export default {
           .value() || [];
     },
     onKeySelected(payload) {
-      console.log(payload);
       const { value } = payload;
       // 找到原始 config
       const index = this.config.findIndex((el) => el.key === value);
@@ -176,7 +174,6 @@ export default {
           params.push(pick(item, ["key", "value"]));
         }
       });
-      console.log("params", params);
       this.$emit("search", params);
     },
     formatMultipleParams(params, item) {
@@ -199,7 +196,6 @@ export default {
           ? !this.multipleSelectedPair[configKey]?.includes(option.value)
           : option
       );
-      console.log(originOptions, avalibleOptions);
       const selfOption = originOptions.find((item) => item.value === value);
       return value && isEdit
         ? avalibleOptions.concat(selfOption)

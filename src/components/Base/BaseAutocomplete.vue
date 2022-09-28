@@ -74,11 +74,9 @@ export default {
     init() {
       this.selected =
         this.options?.find((el) => el.value === this.value) || null;
-      console.log(this.selected);
       this.input = this.selected?.display || "";
     },
     onSelect(option) {
-      console.log(option);
       this.selected = option;
       this.$emit("select", option);
       this.$emit("save-field", option.value);

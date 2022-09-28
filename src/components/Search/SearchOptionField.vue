@@ -92,7 +92,6 @@ export default {
   },
   methods: {
     handleFieldSave(value) {
-      console.log("enter", value);
       const display =
         this.config.options?.find((item) => item.value === value)?.display ||
         value ||
