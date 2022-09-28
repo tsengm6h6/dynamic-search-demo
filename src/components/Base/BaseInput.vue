@@ -7,7 +7,7 @@
     <b-input
       v-bind="$attrs"
       v-model="currValue"
-      @keydown.enter.native="$emit('save-field', $event.target.value)"
+      @keydown.enter.native="onKeyDown"
     ></b-input>
   </b-field>
 </template>
@@ -42,6 +42,12 @@ export default {
       set(newVal) {
         this.$emit("input", newVal);
       },
+    },
+  },
+  methods: {
+    onKeyDown(evt) {
+      if (!evt.target.value.trim()) return;
+      this.$emit("save-field", evt.target.value.trim());
     },
   },
 };

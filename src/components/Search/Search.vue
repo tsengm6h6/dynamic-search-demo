@@ -125,7 +125,7 @@ export default {
       // 更新原始可選條件 -> render option key list
       this.updateConfig(key);
       // 切換模式
-      if (payload.isEdit && payload.value) {
+      if (payload.isEdit && payload.value && action !== "REMOVE") {
         this.selectOptionKey = false;
       } else {
         this.selectOptionKey = true;
