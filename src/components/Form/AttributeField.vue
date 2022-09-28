@@ -3,11 +3,11 @@
     <b-field label="Attributes" v-if="attrOptions.length > 0">
       <b-select expanded v-model="newAttr.key" placeholder="Attrs. key">
         <option
-          v-for="(option, index) in attrOptions"
-          :key="index"
-          :value="option"
+          v-for="option in attrOptions"
+          :key="option.value"
+          :value="option.value"
         >
-          {{ option }}
+          {{ option.display }}
         </option>
       </b-select>
       <b-input
@@ -41,11 +41,11 @@
           placeholder="Attrs. key"
         >
           <option
-            v-for="(attr, index) in allowAttrs"
-            :key="index"
-            :value="attr"
+            v-for="attr in originAttributes"
+            :key="attr.value"
+            :value="attr.value"
           >
-            {{ attr }}
+            {{ attr.display }}
           </option>
         </b-select>
         <b-input
@@ -68,8 +68,6 @@
 </template>
 
 <script>
-const ALLOW_ATTRS = ["placeholder"];
-
 export default {
   name: "AttrField",
   props: {
@@ -80,43 +78,66 @@ export default {
   },
   data() {
     return {
-      allowAttrs: ALLOW_ATTRS,
       newAttr: {
         key: null,
         value: null,
       },
-      selectedAttrs: [],
+      originAttributes: [
+        {
+          value: "placeholder",
+          display: "Placeholder",
+        },
+      ],
     };
+  },
+  watch: {
+    "newAttr.value": {
+      handler(val) {
+        if (val) {
+          this.$emit("ready-to-save", false);
+        } else {
+          this.$emit("ready-to-save", true);
+        }
+      },
+    },
   },
   computed: {
     attrOptions() {
-      return this.allowAttrs.filter(
-        (item) => !this.selectedAttrs.includes(item)
+      return (
+        this.originAttributes.filter(
+          ({ value }) => !this.selected.includes(value)
+        ) || []
       );
+    },
+    selected() {
+      return this.list?.map(({ key }) => key) || [];
     },
     list: {
       get() {
-        return this.options.map(({ key, value }) => ({ key, value }));
+        return (
+          this.options.map((item) => ({
+            key: Object.keys(item)[0],
+            value: Object.values(item)[0],
+          })) || []
+        );
       },
       set(newVal) {
-        console.log("list");
-        this.$emit("change-attrs", newVal);
+        const list = newVal?.map(({ key, value }) => ({ [key]: value })) || [];
+        this.$emit("change-attrs", list);
       },
     },
   },
   methods: {
     addAttribute() {
       if (!this.newAttr.key || !this.newAttr.value) return;
-      this.selectedAttrs.push(this.newAttr.key);
       this.list = this.list.concat(this.newAttr);
       this.newAttr = {
         key: null,
         value: null,
       };
+      this.$emit("ready-to-save", true);
     },
-    removeAttribute({ key, id }) {
-      console.log(key, id);
-      this.selectedAttrs = this.selectedAttrs.filter((attr) => attr !== key);
+    removeAttribute({ key }) {
       this.list = this.list.filter((option) => option.key !== key);
     },
   },

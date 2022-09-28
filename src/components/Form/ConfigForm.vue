@@ -28,7 +28,11 @@
         :options="form.options"
         @add-option="addOption"
       />
-      <AttributeField :options="form.attrs" @change-attrs="changeAttribute" />
+      <AttributeField
+        @ready-to-save="readyToSave = $event"
+        :options="form.attrs"
+        @change-attrs="changeAttribute"
+      />
       <BaseInput
         disabled
         label="Value"
@@ -100,6 +104,7 @@ export default {
       newOption: "",
       config: [],
       invalidList: [],
+      readyToSave: true,
     };
   },
   computed: {
@@ -116,7 +121,8 @@ export default {
     },
     disabledAddConfig() {
       return (
-        this.form.type === "autocomplete" && this.form.options.length === 0
+        (this.form.type === "autocomplete" && this.form.options.length === 0) ||
+        !this.readyToSave
       );
     },
   },
@@ -133,9 +139,7 @@ export default {
       this.newOption = "";
     },
     changeAttribute(payload) {
-      console.log("change attrs");
-      const formatPayload = payload.map(({ key, value }) => ({ [key]: value }));
-      this.form.attrs = formatPayload;
+      this.form.attrs = payload;
     },
     addConfig() {
       const isValid = this.validate();
