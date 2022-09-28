@@ -256,25 +256,18 @@ export default {
   flex: 0 0 auto;
 }
 
-.reset__position {
-  & ::v-deep .autocomplete {
-    position: static;
+.reset__position ::v-deep .autocomplete {
+  position: static;
+}
+.reset__position ::v-deep .control {
+  position: static;
+}
 
-    &::v-deep .input {
-      position: static;
-    }
-  }
-
-  & ::v-deep .control {
-    position: static;
-  }
-
-  & ::v-deep .input {
-    border: none;
-    box-shadow: none;
-    background: transparent;
-    position: static;
-  }
+.reset__position ::v-deep .input {
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  position: static;
 }
 
 /* Scrollbar */
