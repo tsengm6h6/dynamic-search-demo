@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-field label="Attributes" v-if="attrOptions.length > 0">
+    <b-field label="Attributes" class="pr-3" v-if="attrOptions.length > 0">
       <b-select expanded v-model="newAttr.key" placeholder="Attrs. key">
         <option
           v-for="option in attrOptions"
@@ -26,20 +26,14 @@
       </div>
     </b-field>
 
-    <b-field
-      class="attr__field p-r-2"
-      v-for="option in list"
-      :key="option.key"
-      grouped
-      :label="attrOptions.length === 0 ? 'Attributes' : ''"
-    >
-      <b-field expanded>
-        <b-select
-          expanded
-          disabled
-          v-model="option.key"
-          placeholder="Attrs. key"
-        >
+    <div class="attr__field mb-4 pr-3">
+      <b-field
+        v-for="(value, key, index) in currentAttrs"
+        :key="key"
+        expanded
+        :label="attrOptions.length === 0 && index === 0 ? 'Attributes' : ''"
+      >
+        <b-select expanded disabled :value="key" placeholder="Attrs. key">
           <option
             v-for="attr in originAttributes"
             :key="attr.value"
@@ -49,21 +43,21 @@
           </option>
         </b-select>
         <b-input
-          v-model="option.value"
+          :value="value"
           disabled
           placeholder="Attrs. value"
           expanded
         ></b-input>
+        <div class="control">
+          <b-button
+            icon-right="delete"
+            type="is-primary"
+            outlined
+            @click="removeAttribute(key)"
+          />
+        </div>
       </b-field>
-      <div class="control">
-        <b-button
-          icon-right="delete"
-          type="is-primary"
-          outlined
-          @click="removeAttribute(option)"
-        />
-      </div>
-    </b-field>
+    </div>
   </div>
 </template>
 
@@ -71,8 +65,8 @@
 export default {
   name: "AttrField",
   props: {
-    options: {
-      type: Array,
+    attributes: {
+      type: Object,
       default: () => [],
     },
   },
@@ -86,6 +80,22 @@ export default {
         {
           value: "placeholder",
           display: "Placeholder",
+        },
+        {
+          value: "min",
+          display: "MMMMin",
+        },
+        {
+          value: "max",
+          display: "MAXXX",
+        },
+        {
+          value: "max11",
+          display: "MAXXX222",
+        },
+        {
+          value: "max33",
+          display: "MAXXX44",
         },
       ],
     };
@@ -110,35 +120,37 @@ export default {
       );
     },
     selected() {
-      return this.list?.map(({ key }) => key) || [];
+      return Object.keys(this.attributes) || [];
     },
-    list: {
+    currentAttrs: {
       get() {
-        return (
-          this.options.map((item) => ({
-            key: Object.keys(item)[0],
-            value: Object.values(item)[0],
-          })) || []
-        );
+        return this.attributes;
       },
       set(newVal) {
-        const list = newVal?.map(({ key, value }) => ({ [key]: value })) || [];
-        this.$emit("change-attrs", list);
+        console.log("set", newVal);
+        this.$emit("change-attrs", newVal);
       },
     },
   },
   methods: {
     addAttribute() {
       if (!this.newAttr.key || !this.newAttr.value) return;
-      this.list = this.list.concat(this.newAttr);
+      this.currentAttrs = {
+        ...this.currentAttrs,
+        [this.newAttr.key]: this.newAttr.value,
+      };
       this.newAttr = {
         key: null,
         value: null,
       };
       this.$emit("ready-to-save", true);
     },
-    removeAttribute({ key }) {
-      this.list = this.list.filter((option) => option.key !== key);
+    removeAttribute(key) {
+      const obj = {
+        ...this.currentAttrs,
+      };
+      delete obj[key];
+      this.currentAttrs = { ...obj };
     },
   },
 };

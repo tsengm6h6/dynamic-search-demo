@@ -165,6 +165,7 @@ export default {
       this.selectedConfig = [];
       this.config = cloneDeep(this.initConfig);
       this.selectOptionKey = true;
+      this.$emit("search", []);
     },
     search() {
       const params = [];

@@ -30,7 +30,7 @@
       />
       <AttributeField
         @ready-to-save="readyToSave = $event"
-        :options="form.attrs"
+        :attributes="form.attrs"
         @change-attrs="changeAttribute"
       />
       <BaseInput
@@ -77,7 +77,7 @@ const RAW_FORM = {
   value: null,
   options: [],
   multiple: false,
-  attrs: [],
+  attrs: {},
 };
 
 export default {
