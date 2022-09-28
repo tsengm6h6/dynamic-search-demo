@@ -5,7 +5,12 @@
       class="control field__wrapper"
       :class="customClass"
     >
-      <b-tag type="is-primary" aria-close-label="Close tag" closable>
+      <b-tag
+        type="is-primary"
+        aria-close-label="Close tag"
+        closable
+        @close="removeOption(config)"
+      >
         {{ config.label }}
       </b-tag>
       <div class="field__component">
@@ -93,6 +98,9 @@ export default {
       };
       // emit 給複層更新 selectedConfig -> render
       this.$emit("field-changed", saveConfig);
+    },
+    removeOption({ id, key }) {
+      this.$emit("remove-config", { id, key });
     },
   },
 };

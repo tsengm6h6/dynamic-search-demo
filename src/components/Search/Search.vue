@@ -7,7 +7,8 @@
           :key="config.id"
           :initFieldConfig="config"
           :avalible-options="getAvalibleOptions(config)"
-          @field-changed="onFieldChanged"
+          @field-changed="onFieldChanged($event, 'CHANGE')"
+          @remove-config="onFieldChanged($event, 'REMOVE')"
           custom-class="search__option reset__position"
         />
         <BaseAutocomplete
@@ -115,12 +116,16 @@ export default {
       // 切換模式
       this.selectOptionKey = false;
     },
-    onFieldChanged(payload) {
+    onFieldChanged(payload, action = "CHANGE") {
       console.log("change", payload);
       const { id, key } = payload;
       // 更新 user 所選 selectedConfig -> render display tag
       const index = this.selectedConfig.findIndex((el) => el.id === id);
-      this.selectedConfig.splice(index, 1, payload);
+      if (action === "REMOVE") {
+        this.selectedConfig.splice(index, 1);
+      } else {
+        this.selectedConfig.splice(index, 1, payload);
+      }
       // 更新原始可選條件 -> render option key list
       const configIndex = this.config.findIndex((el) => el.key === key);
       this.updateConfig(configIndex);
