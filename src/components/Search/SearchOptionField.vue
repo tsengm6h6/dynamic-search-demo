@@ -9,7 +9,7 @@
         type="is-primary"
         aria-close-label="Close tag"
         closable
-        @close="removeOption(config)"
+        @close="$emit('remove-option-key', config)"
       >
         {{ config.label }}
       </b-tag>
@@ -26,7 +26,12 @@
       <div class="control tag__wrapper">
         <b-taglist attached>
           <b-tag type="is-dark">{{ config.label }}</b-tag>
-          <b-tag type="is-info">{{ config.display }}</b-tag>
+          <b-tag
+            type="is-info"
+            closable
+            @close="$emit('remove-option-key', config)"
+            >{{ config.display }}</b-tag
+          >
         </b-taglist>
       </div>
     </div>
@@ -99,9 +104,9 @@ export default {
       // emit 給複層更新 selectedConfig -> render
       this.$emit("field-changed", saveConfig);
     },
-    removeOption({ id, key }) {
-      this.$emit("remove-config", { id, key });
-    },
+    // removeOption({ id, key }) {
+    //   this.$emit("remove-config", { id, key });
+    // },
   },
 };
 </script>

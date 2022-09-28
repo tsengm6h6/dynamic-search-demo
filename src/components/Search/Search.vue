@@ -8,7 +8,7 @@
           :initFieldConfig="config"
           :avalible-options="getAvalibleOptions(config)"
           @field-changed="onFieldChanged($event, 'CHANGE')"
-          @remove-config="onFieldChanged($event, 'REMOVE')"
+          @remove-option-key="onFieldChanged($event, 'REMOVE')"
           custom-class="search__option reset__position"
         />
         <BaseAutocomplete
@@ -128,7 +128,13 @@ export default {
       }
       // 更新原始可選條件 -> render option key list
       const configIndex = this.config.findIndex((el) => el.key === key);
-      this.updateConfig(configIndex);
+      console.log("configIndex", configIndex);
+      if (configIndex > -1) {
+        this.updateConfig(configIndex);
+      } else {
+        const initFieldConfig = this.initConfig.find((el) => el.key === key);
+        this.config.push(initFieldConfig);
+      }
       // 切換模式
       this.selectOptionKey = true;
     },
