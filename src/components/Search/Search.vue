@@ -120,35 +120,40 @@ export default {
       console.log("change", payload);
       const { id, key } = payload;
       // 更新 user 所選 selectedConfig -> render display tag
+      this.updateSelectedConfig(id, payload, action);
+      // 更新原始可選條件 -> render option key list
+      this.updateConfig(key);
+      // 切換模式
+      this.selectOptionKey = true;
+    },
+    updateSelectedConfig(id, payload, action) {
       const index = this.selectedConfig.findIndex((el) => el.id === id);
       if (action === "REMOVE") {
         this.selectedConfig.splice(index, 1);
       } else {
         this.selectedConfig.splice(index, 1, payload);
       }
-      // 更新原始可選條件 -> render option key list
-      const configIndex = this.config.findIndex((el) => el.key === key);
-      console.log("configIndex", configIndex);
-      if (configIndex > -1) {
-        this.updateConfig(configIndex);
+    },
+    updateConfig(key) {
+      const index = this.config.findIndex((el) => el.key === key);
+      if (index > -1) {
+        const fullSelected = this.multipleIsFullSelected(index);
+        if (fullSelected) {
+          this.config.splice(index, 1);
+        }
       } else {
         const initFieldConfig = this.initConfig.find((el) => el.key === key);
         this.config.push(initFieldConfig);
       }
-      // 切換模式
-      this.selectOptionKey = true;
     },
-    updateConfig(index) {
+    multipleIsFullSelected(index) {
       const { multiple, options, key } = this.config[index];
       // 複選有選項 -> 已選滿 true，則 config 剔除該選項
       // 複選沒選項 -> false，保留（可填無限多個）
       // 不是複選 -> 無條件 true，則 config 剔除該選項
-      const fullSelected = multiple
+      return multiple
         ? options && options.length === this.multipleSelectedPair[key].length
         : true;
-      if (fullSelected) {
-        this.config.splice(index, 1);
-      }
     },
     reset() {
       this.selectedConfig = [];
