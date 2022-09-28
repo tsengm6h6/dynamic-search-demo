@@ -75,7 +75,7 @@ export default {
       }));
     },
     multipleSelectedPair() {
-      const pair = {}; // key: [options]
+      const pair = {};
       this.multipleConfig.forEach((key) => {
         const selected =
           this.selectedConfig.filter((config) => config.key === key) || [];
@@ -106,24 +106,18 @@ export default {
     },
     onKeySelected(payload) {
       const { value } = payload;
-      // 找到原始 config
       const index = this.config.findIndex((el) => el.key === value);
-      // 加入 user 所選
       this.selectedConfig.push({
         ...this.config[index],
         isEdit: true,
         id: Math.random().toString(36).substr(2, 9),
       });
-      // 切換模式
       this.selectOptionKey = false;
     },
     onFieldChanged(payload, action) {
       const { id, key } = payload;
-      // 更新 user 所選 selectedConfig -> render display tag
       this.updateSelectedConfig(id, payload, action);
-      // 更新原始可選條件 -> render option key list
       this.updateConfig(key);
-      // 切換模式
       if (payload.isEdit && payload.value && action !== "REMOVE") {
         this.selectOptionKey = false;
       } else {
@@ -152,9 +146,6 @@ export default {
     },
     multipleIsFullSelected(index) {
       const { multiple, options, key } = this.config[index];
-      // 複選有選項 -> 已選滿 true，則 config 剔除該選項
-      // 複選沒選項 -> false，保留（可填無限多個）
-      // 不是複選 -> 無條件 true，則 config 剔除該選項
       return multiple
         ? options && options.length === this.multipleSelectedPair[key].length
         : true;
@@ -209,7 +200,6 @@ export default {
 .search__wrapper {
   width: 100%;
   display: flex;
-  // align-items: center;
 }
 
 .search__field {

@@ -96,14 +96,12 @@ export default {
         this.config.options?.find((item) => item.value === value)?.display ||
         value ||
         "";
-      // 把值存入 config 物件
       const saveConfig = {
         ...this.config,
         isEdit: false,
         value,
         display,
       };
-      // emit 給複層更新 selectedConfig -> render
       this.$emit("field-changed", saveConfig);
     },
     edit() {

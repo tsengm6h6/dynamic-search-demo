@@ -59,12 +59,6 @@ export const mockSearchConfigOne = [
     multiple: true,
     options: mockUserList,
   },
-  // {
-  //   key: "createDate",
-  //   label: "Create Date",
-  //   type: "datepicker",
-  //   value: null,
-  // },
   {
     key: "phone",
     label: "Phone",
