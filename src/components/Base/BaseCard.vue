@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6">
+  <div class="py-4 px-2">
     <div class="card is-flex-grow-1">
       <div class="card-content">
         <slot />
