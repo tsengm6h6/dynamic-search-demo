@@ -13,10 +13,18 @@
         </div>
       </div>
       <Search ref="search" :init-config="config" @search="setResult" />
-      <div class="mt-4">
+      <div class="mt-4 action__buttons">
         <b-button type="is-success" @click="toggleTryIt">
           {{ tryIt ? "Back to Demo" : "Try it" }}
         </b-button>
+        <a
+          target="_blank"
+          href="https://github.com/tsengm6h6/dynamic-search-demo"
+        >
+          <b-button type="is-info" outlined icon-right="github">
+            View Code
+          </b-button>
+        </a>
       </div>
       <div>
         <div class="columns is-multiline">
@@ -117,5 +125,11 @@ export default {
   50% {
     border-color: #edac4b;
   }
+}
+
+.action__buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>

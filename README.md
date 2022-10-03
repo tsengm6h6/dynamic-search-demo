@@ -1,4 +1,4 @@
-# Single line search component
+# Single-line search component
 built with Vue.js 2.0 & Buefy
 ## Demo
 ![demo](https://i.imgur.com/h6fxTAE.gif)
